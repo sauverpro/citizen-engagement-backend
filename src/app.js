@@ -6,8 +6,21 @@ import agencyRoutes from './routes/agencyRoutes.js';
 
 const app = express();
 
+// CORS Configuration
+const corsOptions = {
+  origin: [
+    'https://citizen-engagement-bay.vercel.app',
+    'http://localhost:5173', // Local development
+    'http://localhost:3000'  // Alternative local port
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Routes
