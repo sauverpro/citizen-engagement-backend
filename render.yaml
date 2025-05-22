@@ -3,7 +3,10 @@ services:
     runtime: node
     name: citizensys-api
     buildCommand: npm install
-    startCommand: npm start
+    startCommand: |
+      mkdir -p /opt/render/project/src/data
+      node -e "const { connectDB } = require('./src/config/database.js'); connectDB().then(() => console.log('Database initialized'));" || true
+      npm start
     envVars:
       - key: NODE_ENV
         value: production

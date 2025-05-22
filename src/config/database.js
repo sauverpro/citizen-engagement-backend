@@ -33,10 +33,14 @@ export async function connectDB() {
     await sequelize.authenticate();
     console.log('Database connection established successfully.');
     
-    // Sync database in development only
-    if (process.env.NODE_ENV === 'development') {
+    // In production, create tables if they don't exist
+    // In development, sync all changes
+    if (process.env.NODE_ENV === 'production') {
+      await sequelize.sync({ alter: false }); // Only create missing tables
+      console.log('Production database tables verified');
+    } else {
       await sequelize.sync();
-      console.log('Database synced successfully');
+      console.log('Development database synced successfully');
     }
   } catch (error) {
     console.error('Unable to connect to the database:', error);
