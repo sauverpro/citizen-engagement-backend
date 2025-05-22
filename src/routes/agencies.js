@@ -1,6 +1,7 @@
 import express from 'express';
 import { verifyToken, isAdmin } from '../middleware/authMiddleware.js';
 import { createAgency, deleteAgency, getAllAgencies, updateAgency } from '../controllers/agencyController.js';
+import { models } from '../config/database.js';
 
 const router = express.Router();
 
@@ -125,7 +126,7 @@ router.put('/:id', verifyToken, isAdmin, updateAgency);
  */
 router.get('/:id', verifyToken, async (req, res) => {
   try {
-    const agency = await import('../config/database.js').then(({ models }) => models.Agency.findByPk(req.params.id));
+    const agency = await models.Agency.findByPk(req.params.id);
     if (!agency) return res.status(404).json({ error: 'Agency not found' });
     res.json(agency);
   } catch (err) {

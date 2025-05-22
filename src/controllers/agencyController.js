@@ -1,4 +1,4 @@
-import models from '../config/database.js';
+import { models } from '../config/database.js';
 
 export async function createAgency(req, res) {
   try {
@@ -41,7 +41,7 @@ export async function updateAgency(req, res) {
     res.status(400).json({ error: err.message });
   }
 }
-// deleteAgency
+
 export async function deleteAgency(req, res) {
   try {
     const agency = await models.Agency.findByPk(req.params.id);

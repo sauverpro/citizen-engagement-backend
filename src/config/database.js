@@ -44,4 +44,5 @@ export async function connectDB() {
   }
 }
 
+export { models };
 export default sequelize;

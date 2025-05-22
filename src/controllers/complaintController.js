@@ -1,9 +1,7 @@
-import { Complaint } from '../models/index.js';
-
+import { models } from '../config/database.js';
 import { assignComplaint } from '../services/autoAssignService.js';
 import upload from '../config/storage.js';
-import fs from 'fs'; 
-import models from '../config/database.js';
+import fs from 'fs';
 
 export const createComplaint = [
   upload.array('attachments', 3),

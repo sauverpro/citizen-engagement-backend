@@ -1,4 +1,4 @@
-import models from '../config/database.js';
+import { models } from '../config/database.js';
 import { Op, Sequelize } from 'sequelize';
 
 // Get overall statistics
