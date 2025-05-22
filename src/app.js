@@ -8,13 +8,10 @@ const app = express();
 
 // CORS Configuration
 const corsOptions = {
-  origin: [
-    'https://citizen-engagement-bay.vercel.app',
-    'http://localhost:5173', // Local development
-    'http://localhost:3000'  // Alternative local port
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  origin: '*', // Allow all origins temporarily
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
   credentials: true,
   optionsSuccessStatus: 200
 };
