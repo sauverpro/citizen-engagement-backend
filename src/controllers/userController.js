@@ -1,4 +1,4 @@
-import models from '../config/database.js';
+import { models } from '../config/database.js';
 import bcrypt from 'bcrypt';
 
 export async function getUsers(req, res) {
