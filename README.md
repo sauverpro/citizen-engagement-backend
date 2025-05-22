@@ -3,6 +3,16 @@
 ## Overview
 Backend API service for the CitizenSys Complaint Management System, built with Express.js and SQLite.
 
+Repository: [https://github.com/sauverpro/citizen-engagement-backend](https://github.com/sauverpro/citizen-engagement-backend)
+
+## Default Admin Credentials
+```json
+{
+  "email": "admin@gmail.com",
+  "password": "admin123"
+}
+```
+
 ## Tech Stack
 - Node.js
 - Express.js
