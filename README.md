@@ -90,10 +90,14 @@ server/
    - Render.com account
    - Git repository with your code
 
-2. **Deployment Steps**
+2. **Deployment Information**
+   - Backend URL: https://citizen-engagement-backend.onrender.com
+   - Frontend URL: https://citizen-engagement-bay.vercel.app
+
+3. **Deployment Steps**
 
    a. **Manual Deployment**
-   - Go to [Render Dashboard](https://dashboard.render.com)
+   - Go to [Render Dashboard](https://render.com/dashboard)
    - Click "New +" → "Web Service"
    - Connect your repository
    - Use these settings:
@@ -110,7 +114,7 @@ server/
    NODE_ENV=production
    JWT_SECRET=your_secure_jwt_secret
    PORT=8080
-   FRONTEND_URL=https://your-frontend-url.vercel.app
+   FRONTEND_URL=https://citizen-engagement-bay.vercel.app
    ```
 
    c. **Database Configuration**

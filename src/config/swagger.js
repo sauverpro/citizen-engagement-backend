@@ -4,15 +4,19 @@ import swaggerUi from 'swagger-ui-express';
 const swaggerDefinition = {
   openapi: '3.0.0',
   info: {
-    title: 'Express API with Swagger',
+    title: 'CitizenSys API Documentation',
     version: '1.0.0',
-    description: 'API documentation for your Express server',
+    description: 'API documentation for the CitizenSys Complaint Management System',
   },
   servers: [
     {
       url: 'http://localhost:5000',
       description: 'Development server',
     },
+    {
+      url: 'https://citizen-engagement-backend.onrender.com',
+      description: 'Production server',
+    }
   ],
   components: {
     securitySchemes: {
@@ -32,7 +36,7 @@ const swaggerDefinition = {
 
 const options = {
   swaggerDefinition,
-  apis: ['./src/routes/*.js', './src/controllers/*.js'], // Path to the API docs
+  apis: ['./src/routes/*.js'], // Path to the API docs
 };
 
 const swaggerSpec = swaggerJSDoc(options);

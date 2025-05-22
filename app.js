@@ -16,7 +16,8 @@ const app = express();
 // Enable CORS with environment-specific configuration
 const allowedOrigins = [
   'http://localhost:5173', // Vite's default dev port
-  process.env.FRONTEND_URL, // Production frontend URL
+  'https://citizen-engagement-bay.vercel.app', // Production frontend URL
+  process.env.FRONTEND_URL, // Optional additional frontend URL
 ];
 
 app.use(cors({
