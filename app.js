@@ -14,13 +14,12 @@ dotenv.config();
 const app = express();
 
 // Enable CORS with environment-specific configuration
-// allow all in production
-// allow only specific origins in development 
-const allowedOrigins = process.env.NODE_ENV === 'production' ?
-  ['*'] :
-  ['http://localhost:5173', 'https://citizen-engagement-bay.vercel.app', process.env.FRONTEND_URL];
-// const allowedOrigins = ['http://localhost:5173', 'https://citizen-engagement-bay.vercel.app', process.env.FRONTEND_URL];
- 
+const allowedOrigins = [
+  '*', // Allow all origins for development
+  'http://localhost:5173', // Vite's default dev port
+  'https://citizen-engagement-bay.vercel.app', // Production frontend URL
+  process.env.FRONTEND_URL, // Optional additional frontend URL
+];
 
 app.use(cors({
   origin: function(origin, callback) {
