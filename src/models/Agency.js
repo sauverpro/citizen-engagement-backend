@@ -11,8 +11,15 @@ export default (sequelize, DataTypes) => {
       validate: { isEmail: true }
     },
     categories: {
-      type: DataTypes.STRING,
-      allowNull: false
+      type: DataTypes.TEXT,
+      allowNull: false,
+      get() {
+        const rawValue = this.getDataValue('categories');
+        return rawValue ? JSON.parse(rawValue) : [];
+      },
+      set(value) {
+        this.setDataValue('categories', JSON.stringify(value));
+      }
     }
   });
 

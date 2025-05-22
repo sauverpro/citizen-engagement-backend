@@ -3,6 +3,12 @@ import { models } from '../config/database.js';
 export async function createAgency(req, res) {
   try {
     const { name, categories, contactEmail } = req.body;
+    
+    // Validate categories is an array
+    if (!Array.isArray(categories)) {
+      return res.status(400).json({ error: 'Categories must be an array' });
+    }
+
     const agency = await models.Agency.create({
       name,
       categories,
@@ -31,6 +37,12 @@ export async function updateAgency(req, res) {
     if (!agency) return res.status(404).json({ error: 'Agency not found' });
     
     const { name, categories, contactEmail } = req.body;
+    
+    // Validate categories is an array if provided
+    if (categories && !Array.isArray(categories)) {
+      return res.status(400).json({ error: 'Categories must be an array' });
+    }
+
     await agency.update({
       name,
       categories,
