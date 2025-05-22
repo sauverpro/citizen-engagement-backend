@@ -1,23 +1,35 @@
-import models from '../config/database.js'; 
+import { models } from '../config/database.js';
 import { Op } from 'sequelize';
 
 export async function assignComplaint(complaintId) {
-  const complaint = await models.Complaint.findByPk(complaintId);
-  // Use LIKE for SQLite compatibility (categories as comma-separated string)
-  const agency = await models.Agency.findOne({
-    where: {
-      categories: { [Op.like]: `%${complaint.category}%` }
+  try {
+    const complaint = await models.Complaint.findByPk(complaintId);
+    if (!complaint) {
+      throw new Error('Complaint not found');
     }
-  });
 
-  if (agency) {
-    await complaint.update({
-      agencyId: agency.id,
-      status: 'assigned'
+    // Find all agencies
+    const agencies = await models.Agency.findAll();
+    
+    // Find an agency that handles this category
+    const matchingAgency = agencies.find(agency => {
+      const categories = agency.categories; // Will be automatically parsed by the getter
+      return Array.isArray(categories) && categories.includes(complaint.category);
     });
-    return agency;
+
+    if (matchingAgency) {
+      await complaint.update({
+        agencyId: matchingAgency.id,
+        status: 'assigned'
+      });
+      return matchingAgency;
+    }
+    
+    // If no matching agency is found, mark as pending
+    await complaint.update({ status: 'pending' });
+    return null;
+  } catch (error) {
+    console.error('Error in assignComplaint:', error);
+    throw error;
   }
-  
-  await complaint.update({ status: 'unassigned' });
-  return null;
-};
+}

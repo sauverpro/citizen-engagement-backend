@@ -8,6 +8,13 @@ export const createComplaint = [
   async (req, res) => {
     try {
       const { title, description, category } = req.body;
+      
+      if (!title || !description || !category) {
+        return res.status(400).json({ 
+          error: 'Missing required fields. Title, description, and category are required.' 
+        });
+      }
+
       const attachments = req.files?.map(file => file.path) || [];
       
       // Create complaint with status 'pending'
@@ -20,19 +27,34 @@ export const createComplaint = [
         status: 'pending'
       });
 
-      // Assign complaint to agency (autoAssignService)
-      await assignComplaint(complaint.id);
+      try {
+        // Try to assign to an agency
+        await assignComplaint(complaint.id);
+      } catch (assignError) {
+        console.error('Error assigning complaint:', assignError);
+        // Don't fail the complaint creation if assignment fails
+      }
 
-      // Fetch updated complaint (with agencyId/status possibly changed)
-      const updatedComplaint = await models.Complaint.findByPk(complaint.id);
+      // Fetch updated complaint with associations
+      const updatedComplaint = await models.Complaint.findByPk(complaint.id, {
+        include: [{
+          model: models.Agency,
+          as: 'agency',
+          attributes: ['id', 'name', 'contactEmail']
+        }]
+      });
+
       res.status(201).json(updatedComplaint);
     } catch (err) {
-      // console.log("...........",err,"...........");
+      console.error('Error creating complaint:', err);
       // Clean up uploaded files if any error occurs
       if (req.files) {
         req.files.forEach(file => fs.unlink(file.path, () => {}));
       }
-      res.status(400).json({ error: err.message });
+      res.status(400).json({ 
+        error: err.message || 'Error creating complaint',
+        details: err.original?.message
+      });
     }
   }
 ];
