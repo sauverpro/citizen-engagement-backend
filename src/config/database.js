@@ -13,8 +13,14 @@ const dbPath = process.env.NODE_ENV === 'production'
 // Ensure the data directory exists in production
 if (process.env.NODE_ENV === 'production') {
   const dataDir = '/opt/render/project/src/data';
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
+  try {
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true, mode: 0o755 });
+      console.log('Created data directory:', dataDir);
+    }
+  } catch (error) {
+    console.error('Error creating data directory:', error);
+    throw error;
   }
 }
 
@@ -42,30 +48,34 @@ export async function connectDB() {
     await sequelize.authenticate();
     console.log('Database connection established successfully.');
     
-    // In production, only create tables if they don't exist
-    // Never force sync or alter in production
+    // Always sync in production for now to ensure tables exist
     if (process.env.NODE_ENV === 'production') {
-      // Check if database file exists
-      const dbExists = fs.existsSync(dbPath);
-      
-      if (!dbExists) {
-        // Only create tables if database doesn't exist
+      try {
+        console.log('Starting database sync in production...');
         await sequelize.sync();
-        console.log('Production database initialized for the first time');
+        console.log('Production database synced successfully');
         
-        // Create default admin user if it's a fresh database
+        // Check if admin user exists
         const adminExists = await models.User.findOne({ where: { email: 'admin@gmail.com' } });
         if (!adminExists) {
-          await models.User.create({
-            name: 'Admin',
-            email: 'admin@gmail.com',
-            password: '$2b$10$EiX/TDE9VcQrHv6GA3RdKu/BSQ/2tZ9qeUErySs0lxjfP8mJBnAgi', // admin123
-            role: 'admin'
-          });
-          console.log('Default admin user created');
+          try {
+            await models.User.create({
+              name: 'Admin',
+              email: 'admin@gmail.com',
+              password: '$2b$10$EiX/TDE9VcQrHv6GA3RdKu/BSQ/2tZ9qeUErySs0lxjfP8mJBnAgi', // admin123
+              role: 'admin'
+            });
+            console.log('Default admin user created successfully');
+          } catch (error) {
+            console.error('Error creating admin user:', error);
+            // Continue execution even if admin creation fails
+          }
+        } else {
+          console.log('Admin user already exists');
         }
-      } else {
-        console.log('Using existing production database');
+      } catch (error) {
+        console.error('Error syncing database:', error);
+        throw error;
       }
     } else {
       // In development, we can sync all changes
@@ -75,6 +85,20 @@ export async function connectDB() {
   } catch (error) {
     console.error('Unable to connect to the database:', error);
     throw error;
+  }
+}
+
+// Add a function to verify table existence
+export async function verifyTables() {
+  try {
+    const tables = ['Users', 'Complaints', 'Agencies'];
+    for (const table of tables) {
+      const query = `SELECT name FROM sqlite_master WHERE type='table' AND name='${table}';`;
+      const result = await sequelize.query(query, { type: Sequelize.QueryTypes.SELECT });
+      console.log(`Table ${table} exists:`, result.length > 0);
+    }
+  } catch (error) {
+    console.error('Error verifying tables:', error);
   }
 }
 

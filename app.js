@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { connectDB } from './src/config/database.js';
+import { connectDB, verifyTables } from './src/config/database.js';
 import authRoutes from './src/routes/auth.js';
 import complaintsRoutes from './src/routes/complaints.js';
 import agenciesRoutes from './src/routes/agencies.js';
@@ -29,7 +29,7 @@ app.use(cors());
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'healthy' });
+  res.json({ status: 'ok' });
 });
 
 // Routes - all under /api
@@ -54,6 +54,13 @@ export async function initApp() {
   try {
     await connectDB();
     console.log('Database connected successfully');
+    
+    // Verify tables after connection
+    if (process.env.NODE_ENV === 'production') {
+      console.log('Verifying database tables...');
+      await verifyTables();
+    }
+    
     return app;
   } catch (err) {
     console.error('Failed to initialize app:', err);
